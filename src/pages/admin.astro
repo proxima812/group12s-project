@@ -1,0 +1,173 @@
+---
+import { eq } from "astro:db"
+import { db, Post, User } from "astro:db"
+
+
+
+const posts = await db.select().from(Post)
+
+
+
+const user = Astro.locals.user
+if (!user) {
+	return Astro.redirect("/signin")
+}
+---
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<title>Astro</title>
+	</head>
+	<body class="p-20">
+		<a href="/">go back</a>
+		<section class="mb-5 bg-zinc-100">
+			<form id="add-form" class="grid max-w-sm gap-2 p-5">
+				<input
+					type="text"
+					id={`input-${Math.random}`}
+					name={"Link Title".toLowerCase().replace(" ", "-")}
+					required
+					placeholder="Title"
+				/>
+				<textarea
+					required
+					id={`input-${Math.random}`}
+					name={"Link Description".toLowerCase().replace(" ", "-")}></textarea>
+				<button type="submit">Add Post</button>
+			</form>
+		</section>
+		<section class="grid grid-cols-3 gap-6">
+			{
+				posts &&
+					posts.map(post => (
+						<article class="bg-zinc-100 p-3">
+							<div class="grid gap-3">
+								<h2>{post.title}</h2>
+								<p>{post.description}</p>
+								<button data-delete data-id={`${post.id}`}>
+									Удалить пост
+								</button>
+							</div>
+							<div class="grid gap-3">
+								<input
+									type="text"
+									value={post.title}
+									id="title"
+									placeholder="Title"
+									class="title-input"
+								/>
+								<textarea
+									id="description"
+									placeholder="Description"
+									class="description-textarea"
+								>
+									{post.description}
+								</textarea>
+								<button data-update data-id={`${post.id}`}>
+									Обновить пост
+								</button>
+							</div>
+						</article>
+					))
+			}
+		</section>
+
+		<script is:inline>
+			// delete article
+			const deleteBtns = document.querySelectorAll("[data-delete]")
+			deleteBtns.forEach(btn => {
+				btn.addEventListener("click", e => {
+					const id = btn.getAttribute("data-id")
+					try {
+						fetch(`/api/deletePost/${id}.json`, {
+							method: "DELETE",
+							headers: {
+								"Content-Type": "application/json",
+							},
+						})
+						btn.closest("article")?.remove()
+					} catch (error) {
+						console.error(error)
+					}
+				})
+			})
+
+			// Update article
+			document.querySelector("[data-update]").addEventListener("click", async e => {
+				const id = e.target.getAttribute("data-id")
+				const title = document.getElementById("title").value
+				const description = document.getElementById("description").value
+
+				if (!id || !title.trim() || !description.trim()) {
+					console.error("All fields are required")
+					return
+				}
+
+				try {
+					const response = await fetch(`/api/updatePost/${id}.json`, {
+						method: "PATCH", // Используйте PATCH или PUT в зависимости от конфигурации вашего API
+						headers: {
+							"Content-Type": "application/json",
+						},
+						body: JSON.stringify({ title, description }),
+					})
+
+					if (response.ok) {
+						// Обновите DOM или перенаправьте пользователя, если требуется
+						location.reload()
+					} else {
+						throw new Error("Failed to update post")
+					}
+				} catch (error) {
+					console.error(error)
+				}
+			})
+		</script>
+
+		<script>
+			const addForm = document.querySelector("#add-form")
+
+			// form inputs
+			import sanitizeHtml from "sanitize-html"
+			addForm.addEventListener("submit", async e => {
+				e.preventDefault()
+				try {
+					const formData = new FormData(addForm)
+					const title = sanitizeHtml(formData.get("link-title"))
+					const description = sanitizeHtml(formData.get("link-description"))
+
+					if (typeof title === "string" && typeof description === "string") {
+						const req = await fetch("/api/addPost.json", {
+							method: "POST",
+							headers: {
+								"Content-Type": "application/json",
+							},
+							body: JSON.stringify({
+								title,
+								description,
+							}),
+						})
+
+						const { success, data, message } = await req.json()
+
+						if (success) {
+							addForm.reset()
+							location.reload()
+						} else {
+							throw new Error(message)
+						}
+					}
+				} catch (e) {
+					if (e instanceof Error) {
+						alert(e.message)
+					}
+					console.error(e)
+				}
+			})
+		</script>
+	</body>
+</html>
