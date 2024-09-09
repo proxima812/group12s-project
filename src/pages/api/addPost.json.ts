@@ -1,9 +1,12 @@
 import type { APIRoute } from "astro"
 import { Post, db } from "astro:db"
-import sanitize from "sanitize-html"
 
-export const POST: APIRoute = async ({ request }) => {
+export const POST: APIRoute = async ({ request, locals }) => {
 	const data = await request.json()
+
+	//
+	const userId = locals.user.id // ID из сессии
+	//
 
 	try {
 		const { title, description } = data
@@ -20,9 +23,15 @@ export const POST: APIRoute = async ({ request }) => {
 			)
 		}
 
+		// const res = await db.insert(Post).values({
+		// 	title: sanitize(title),
+		// 	description: sanitize(description),
+		// })
+
 		const res = await db.insert(Post).values({
-			title: sanitize(title),
-			description: sanitize(description),
+			title: title,
+			description: description,
+			userId: userId,
 		})
 
 		if (res) {

@@ -1,5 +1,5 @@
 ---
-
+const user = Astro.locals.user
 ---
 
 <html lang="en">
@@ -11,16 +11,32 @@
 		<title>Astro</title>
 	</head>
 	<body>
-		<header>
-			<nav class="mx-auto flex max-w-5xl gap-4 px-4">
-				<a href="/" class="py-2 underline hover:no-underline">Home</a>
-			</nav>
-		</header>
-		<main class="mx-auto max-w-5xl px-4 py-8">
-			<h1 class="text-3xl font-extrabold lg:text-6xl">
-				<slot name="title">Fallback title here</slot>
-			</h1>
-			<slot />
-		</main>
+		<div class="mx-auto container maw-w-4xl">
+			<header class="bg-zinc-100 p-5 flex justify-between items-center">
+				{
+					user ? (
+						<div class="flex flex-col gap-2">
+							<a class="underline" href="/admin">
+								Перейти в админ панель
+							</a>
+							<form method="POST" action="/api/signout">
+								<button class="underline" type="submit">
+									Выйти
+								</button>
+							</form>
+						</div>
+					) : (
+						<div class="flex flex-col gap-2">
+							<a class="underline" href="/signin">
+								Войти
+							</a>
+						</div>
+					)
+				}
+			</header>
+			<main class="py-12">
+				<slot />
+			</main>
+		</div>
 	</body>
 </html>

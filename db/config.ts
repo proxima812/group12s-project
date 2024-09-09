@@ -19,7 +19,8 @@ const Session = defineTable({
 const Post = defineTable({
 	columns: {
 		id: column.number({ primaryKey: true }),
-		// userId: column.text({ references: () => User.columns.id }),
+		userId: column.text({ references: () => User.columns.id }),
+		// userId: column.text({ optional: false, references: () => User.columns.id }),
 		title: column.text(),
 		description: column.text(),
 	},

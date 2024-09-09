@@ -1,17 +1,19 @@
 ---
-import { eq } from "astro:db"
-import { db, Post, User } from "astro:db"
-
-
-
-const posts = await db.select().from(Post)
-
-
+import { db, Post, User, eq } from "astro:db"
 
 const user = Astro.locals.user
+const userId = user?.id
+
 if (!user) {
 	return Astro.redirect("/signin")
 }
+
+// вывод постов по userId тоесть админ панель для каждого своя
+const posts = await db
+	.select()
+	.from(Post)
+	.innerJoin(User, eq(Post.userId, User.id))
+	.where(eq(User.id, userId))
 ---
 
 <html lang="en">
@@ -23,7 +25,10 @@ if (!user) {
 		<title>Astro</title>
 	</head>
 	<body class="p-20">
-		<a href="/">go back</a>
+		<a href="/" class="underline">Назад</a>
+
+		<h1 class="text-2xl py-5 text-red-500">Привет, {user.username}</h1>
+
 		<section class="mb-5 bg-zinc-100">
 			<form id="add-form" class="grid max-w-sm gap-2 p-5">
 				<input
@@ -40,22 +45,23 @@ if (!user) {
 				<button type="submit">Add Post</button>
 			</form>
 		</section>
-		<section class="grid grid-cols-3 gap-6">
+		<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 			{
 				posts &&
 					posts.map(post => (
 						<article class="bg-zinc-100 p-3">
 							<div class="grid gap-3">
-								<h2>{post.title}</h2>
-								<p>{post.description}</p>
-								<button data-delete data-id={`${post.id}`}>
+								<h2>Пост от человека: {post?.User?.username}</h2>
+								<h2>{post.Post.title}</h2>
+								<p>{post.Post.description}</p>
+								<button data-delete data-id={`${post.Post.id}`}>
 									Удалить пост
 								</button>
 							</div>
 							<div class="grid gap-3">
 								<input
 									type="text"
-									value={post.title}
+									value={post.Post.title}
 									id="title"
 									placeholder="Title"
 									class="title-input"
@@ -65,9 +71,9 @@ if (!user) {
 									placeholder="Description"
 									class="description-textarea"
 								>
-									{post.description}
+									{post.Post.description}
 								</textarea>
-								<button data-update data-id={`${post.id}`}>
+								<button data-update data-id={`${post.Post.id}`}>
 									Обновить пост
 								</button>
 							</div>
@@ -96,35 +102,41 @@ if (!user) {
 				})
 			})
 
-			// Update article
-			document.querySelector("[data-update]").addEventListener("click", async e => {
-				const id = e.target.getAttribute("data-id")
-				const title = document.getElementById("title").value
-				const description = document.getElementById("description").value
+			// Update articles
+			const updateBtns = document.querySelectorAll("[data-update]")
+			updateBtns.forEach(btn => {
+				btn.addEventListener("click", async e => {
+					const id = e.target.getAttribute("data-id")
+					const titleInput = e.target.closest("article").querySelector("#title")
+					const descriptionTextarea = e.target
+						.closest("article")
+						.querySelector("#description")
+					const title = titleInput.value
+					const description = descriptionTextarea.value
 
-				if (!id || !title.trim() || !description.trim()) {
-					console.error("All fields are required")
-					return
-				}
-
-				try {
-					const response = await fetch(`/api/updatePost/${id}.json`, {
-						method: "PATCH", // Используйте PATCH или PUT в зависимости от конфигурации вашего API
-						headers: {
-							"Content-Type": "application/json",
-						},
-						body: JSON.stringify({ title, description }),
-					})
-
-					if (response.ok) {
-						// Обновите DOM или перенаправьте пользователя, если требуется
-						location.reload()
-					} else {
-						throw new Error("Failed to update post")
+					if (!id || !title.trim() || !description.trim()) {
+						console.error("All fields are required")
+						return
 					}
-				} catch (error) {
-					console.error(error)
-				}
+
+					try {
+						const response = await fetch(`/api/updatePost/${id}.json`, {
+							method: "PATCH",
+							headers: {
+								"Content-Type": "application/json",
+							},
+							body: JSON.stringify({ title, description }),
+						})
+
+						if (response.ok) {
+							location.reload()
+						} else {
+							throw new Error("Failed to update post")
+						}
+					} catch (error) {
+						console.error(error)
+					}
+				})
 			})
 		</script>
 
