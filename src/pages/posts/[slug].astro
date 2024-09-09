@@ -16,6 +16,8 @@ const { Content } = await post.render()
 const prettyDate = new Intl.DateTimeFormat("en-US", {
 	dateStyle: "long",
 }).format(new Date(post.data.publishedDate))
+
+export const prerender = true
 ---
 
 <Layout>
