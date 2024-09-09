@@ -15,18 +15,7 @@ export default async function seed() {
 			title: "Google1",
 			description:
 				"I found this cool site that can let you say anything you want without accountability!",
-		},
-		{
-			userId: "user_id_1",
-			title: "Google2",
-			description:
-				"I found this cool site that can let you say anything you want without accountability!",
-		},
-		{
-			userId: "user_id_1",
-			title: "Google3",
-			description:
-				"I found this cool site that can let you say anything you want without accountability!",
+			link: "https://123.com/",
 		},
 	])
 }

@@ -1,5 +1,6 @@
 ---
 import { db, Post, User, eq } from "astro:db"
+import { marked } from "marked"
 
 const user = Astro.locals.user
 const userId = user?.id
@@ -25,9 +26,11 @@ const posts = await db
 		<title>Astro</title>
 	</head>
 	<body class="p-20">
-		<a href="/" class="underline">Назад</a>
+		<a href="/" class="text-white bg-blue-500 font-medium rounded-lg text-sm px-5 py-2.5"
+			>Назад</a
+		>
 
-		<h1 class="text-2xl py-5 text-red-500">Привет, {user.username}</h1>
+		<h1 class="text-2xl py-6">Привет, <b>{user.username}!</b></h1>
 
 		<section class="mb-5 bg-zinc-100">
 			<form id="add-form" class="grid max-w-sm gap-2 p-5">
@@ -36,51 +39,107 @@ const posts = await db
 					id={`input-${Math.random}`}
 					name={"Link Title".toLowerCase().replace(" ", "-")}
 					required
-					placeholder="Title"
+					class="p-3 w-full title-input rounded-md"
+					placeholder="Заголовок"
 				/>
 				<textarea
 					required
+					class="block p-3 w-full focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none"
 					id={`input-${Math.random}`}
-					name={"Link Description".toLowerCase().replace(" ", "-")}></textarea>
-				<button type="submit">Add Post</button>
+					placeholder="Описание"
+					name={"Link Description".toLowerCase().replace(" ", "-")}
+				>
+				</textarea>
+				<input
+					type="text"
+					id={`input-${Math.random}`}
+					name={"Link Href".toLowerCase().replace(" ", "-")}
+					required
+					placeholder="Ссылка"
+					class="w-full title-input p-3 rounded-md"
+					oninput="removeHttpsPrefix(this)"
+				/>
+				<button type="submit">Добавить</button>
 			</form>
 		</section>
-		<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+		<section class="grid grid-cols-1 md:grid-cols-2 gap-6">
 			{
 				posts &&
 					posts.map(post => (
-						<article class="bg-zinc-100 p-3">
-							<div class="grid gap-3">
-								<h2>Пост от человека: {post?.User?.username}</h2>
-								<h2>{post.Post.title}</h2>
-								<p>{post.Post.description}</p>
-								<button data-delete data-id={`${post.Post.id}`}>
-									Удалить пост
-								</button>
-							</div>
-							<div class="grid gap-3">
-								<input
-									type="text"
-									value={post.Post.title}
-									id="title"
-									placeholder="Title"
-									class="title-input"
-								/>
-								<textarea
-									id="description"
-									placeholder="Description"
-									class="description-textarea"
-								>
-									{post.Post.description}
-								</textarea>
-								<button data-update data-id={`${post.Post.id}`}>
-									Обновить пост
-								</button>
+						<article class="bg-zinc-50 border rounded-2xl p-6">
+							<div class="flex flex-col gap-6">
+								<div>
+									<label for="title" class="block mb-2 text-sm font-medium text-gray-900">
+										Заголовок
+									</label>
+									<input
+										type="text"
+										value={post.Post.title}
+										id="title"
+										placeholder="Название"
+										class="w-full title-input p-3 rounded-md"
+									/>
+								</div>
+								<div>
+									<label
+										for="description"
+										class="block mb-2 text-sm font-medium text-gray-900"
+									>
+										Описание
+									</label>
+									<textarea
+										id="description"
+										placeholder="Начало.."
+										value={post.Post.description || ""}
+										class="description-textarea rounded-md p-3 h-full min-h-[200px] w-full"
+									>
+										{post.Post.description}
+									</textarea>
+								</div>
+								<div>
+									<label for="title" class="block mb-2 text-sm font-medium text-gray-900">
+										Ссылки
+									</label>
+									<input
+										type="text"
+										value={post?.Post?.link}
+										id="link"
+										placeholder="https://"
+										class="w-full title-input p-3 rounded-md"
+									/>
+								</div>
+
+								<div class="flex gap-6 items-center">
+									<button
+										class="w-full text-center text-white bg-purple-500 font-medium rounded-lg text-sm px-5 py-2.5"
+										data-update
+										data-id={`${post.Post.id}`}
+									>
+										Обновить пост
+									</button>
+									<button
+										class="w-full text-center  text-white bg-red-500 font-medium rounded-lg text-sm px-5 py-2.5 "
+										data-delete
+										data-id={`${post.Post.id}`}
+									>
+										Удалить пост
+									</button>
+								</div>
 							</div>
 						</article>
 					))
 			}
 		</section>
+
+		<script is:inline>
+			function removeHttpsPrefix(input) {
+				const value = input.value
+				if (value.startsWith("https://")) {
+					input.value = value.substring(8) // Удаляем 'https://'
+				}
+			}
+		</script>
 
 		<script is:inline>
 			// delete article
@@ -107,14 +166,18 @@ const posts = await db
 			updateBtns.forEach(btn => {
 				btn.addEventListener("click", async e => {
 					const id = e.target.getAttribute("data-id")
+
 					const titleInput = e.target.closest("article").querySelector("#title")
 					const descriptionTextarea = e.target
 						.closest("article")
 						.querySelector("#description")
+					const linkInput = e.target.closest("article").querySelector("#link")
+
 					const title = titleInput.value
 					const description = descriptionTextarea.value
+					const link = linkInput.value
 
-					if (!id || !title.trim() || !description.trim()) {
+					if (!id || !title.trim() || !description.trim() || !link.trim()) {
 						console.error("All fields are required")
 						return
 					}
@@ -125,7 +188,7 @@ const posts = await db
 							headers: {
 								"Content-Type": "application/json",
 							},
-							body: JSON.stringify({ title, description }),
+							body: JSON.stringify({ title, description, link }),
 						})
 
 						if (response.ok) {
@@ -151,8 +214,13 @@ const posts = await db
 					const formData = new FormData(addForm)
 					const title = sanitizeHtml(formData.get("link-title"))
 					const description = sanitizeHtml(formData.get("link-description"))
+					const link = sanitizeHtml(formData.get("link-href"))
 
-					if (typeof title === "string" && typeof description === "string") {
+					if (
+						typeof title === "string" &&
+						typeof description === "string" &&
+						typeof link === "string"
+					) {
 						const req = await fetch("/api/addPost.json", {
 							method: "POST",
 							headers: {
@@ -161,6 +229,7 @@ const posts = await db
 							body: JSON.stringify({
 								title,
 								description,
+								link,
 							}),
 						})
 

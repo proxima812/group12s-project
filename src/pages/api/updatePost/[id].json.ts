@@ -18,7 +18,7 @@ export const PATCH: APIRoute = async ({ params, request }) => {
 	}
 
 	try {
-		const res = await db.update(Post).set({ title, description }).where(eq(Post.id, id))
+		const res = await db.update(Post).set({ title, description, link }).where(eq(Post.id, id))
 
 		if (res) {
 			return new Response(

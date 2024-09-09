@@ -12,15 +12,21 @@ const user = Astro.locals.user
 	</head>
 	<body>
 		<div class="mx-auto container maw-w-4xl">
-			<header class="bg-zinc-100 p-5 flex justify-between items-center">
+			<header class="bg-zinc-100 rounded-xl p-5 flex justify-between items-center">
 				{
 					user ? (
-						<div class="flex flex-col gap-2">
-							<a class="underline" href="/admin">
+						<div class="w-full flex justify-between items-center gap-2">
+							<a
+								class=" text-white bg-blue-600 font-medium rounded-lg text-sm px-5 py-2.5 "
+								href="/admin"
+							>
 								Перейти в админ панель
 							</a>
 							<form method="POST" action="/api/signout">
-								<button class="underline" type="submit">
+								<button
+									class=" text-white bg-red-600 font-medium rounded-lg text-sm px-5 py-2.5 "
+									type="submit"
+								>
 									Выйти
 								</button>
 							</form>

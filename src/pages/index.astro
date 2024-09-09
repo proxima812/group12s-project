@@ -1,12 +1,7 @@
 ---
-import { Post, User, db, eq } from "astro:db"
-
+import { Post, User, asc, db, eq } from "astro:db"
+import { marked } from "marked"
 import Layout from "../layouts/Base.astro"
-
-import { getCollection } from "astro:content"
-import { asc } from "astro:db"
-
-const posts = await getCollection("posts")
 
 // вовод с именами пользователей которые добавили пост
 const postsList = await db
@@ -14,19 +9,24 @@ const postsList = await db
 	.from(Post)
 	.innerJoin(User, eq(Post.userId, User.id))
 	.orderBy(asc(Post.id))
+
+// export const prerender = false
 ---
 
 <Layout>
-	<section class="grid md:grid-cols-2 gap-3 grid-cols-1">
+	<section class="grid md:grid-cols-2 items-start lg:grid-cols-3 gap-5 grid-cols-1">
 		{
 			postsList &&
 				postsList.map((post: any) => (
-					<article id={`пост: ${post.Post.id}`} class="">
-						<>
-							<h1 class="text-red-500">{post?.User?.username}</h1>
-							<h2>{post.Post.title}</h2>
-							<p>{post.Post.description}</p>
-						</>
+					<article id={`пост: ${post.Post.id}`}>
+						{/* <span class="text-green-500">{post?.User?.username}</span> */}
+						<main class="bg-white border border-gray-200 rounded-lg p-5">
+							<h2 class="text-xl font-bold mb-3">{post.Post.title}</h2>
+							<div class="prose text-sm" set:html={marked(post.Post.description)} />
+							<a href={`https://${post?.Post?.link}`}>
+								{post.Post.link.replace("https://", "")}
+							</a>
+						</main>
 					</article>
 				))
 		}

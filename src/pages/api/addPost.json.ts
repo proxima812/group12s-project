@@ -9,7 +9,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
 	//
 
 	try {
-		const { title, description } = data
+		const { title, description, link } = data
 
 		if (!title || !description) {
 			return new Response(
@@ -30,7 +30,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
 		const res = await db.insert(Post).values({
 			title: title,
-			description: description,
+      description: description,
+      link: link,
 			userId: userId,
 		})
 

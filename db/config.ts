@@ -23,6 +23,7 @@ const Post = defineTable({
 		// userId: column.text({ optional: false, references: () => User.columns.id }),
 		title: column.text(),
 		description: column.text(),
+		link: column.text(),
 	},
 })
 
