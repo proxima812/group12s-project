@@ -1,4 +1,5 @@
 ---
+import Base from "@/layouts/Base.astro"
 import { db, Post, User, eq } from "astro:db"
 import { marked } from "marked"
 
@@ -17,238 +18,250 @@ const posts = await db
 	.where(eq(User.id, userId))
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body class="p-20">
+<Base>
+	<div class="flex mb-6 items-center gap-3">
 		<a href="/" class="text-white bg-blue-500 font-medium rounded-lg text-sm px-5 py-2.5"
 			>Назад</a
 		>
 
-		<h1 class="text-2xl py-6">Привет, <b>{user.username}!</b></h1>
-
-		<section class="mb-5 bg-zinc-100">
-			<form id="add-form" class="grid max-w-sm gap-2 p-5">
+		<span class="">Привет, <b>{user.username}!</b></span>
+	</div>
+	<section class="mb-6 bg-zinc-50 border rounded-2xl">
+		<form id="add-form" class="grid gap-4 p-5">
+			<div>
+				<label for="title-1" class="block text-sm font-medium mb-2">Название</label>
 				<input
 					type="text"
-					id={`input-${Math.random}`}
+					id={`input-${Math.random} title-1`}
 					name={"Link Title".toLowerCase().replace(" ", "-")}
 					required
-					class="p-3 w-full title-input rounded-md"
-					placeholder="Заголовок"
+					class="p-3 text-sm title-input rounded-md"
+					placeholder="Название"
 				/>
+			</div>
+			<div>
+				<label for="textarea-1" class="block text-sm font-medium mb-2">Описание</label>
 				<textarea
 					required
-					class="block p-3 w-full focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none"
-					id={`input-${Math.random}`}
+					class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 min-h-[100px] focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none"
+					id={`input-${Math.random} textarea-1`}
 					placeholder="Описание"
-					name={"Link Description".toLowerCase().replace(" ", "-")}
-				>
-				</textarea>
+					name={"Link Description".toLowerCase().replace(" ", "-")}></textarea>
+				<p class="mt-2 text-xs text-red-500">до 100 символов</p>
+			</div>
+
+			<div>
+				<label for="link-1" class="block text-sm font-medium mb-2">Ссылка </label>
 				<input
 					type="text"
-					id={`input-${Math.random}`}
+					id={`input-${Math.random} link-1`}
 					name={"Link Href".toLowerCase().replace(" ", "-")}
 					required
-					placeholder="Ссылка"
-					class="w-full title-input p-3 rounded-md"
+					placeholder="https://example.com"
+					class="text-sm title-input p-3 rounded-md"
 					oninput="removeHttpsPrefix(this)"
 				/>
-				<button type="submit">Добавить</button>
-			</form>
-		</section>
+			</div>
+			<button
+				type="submit"
+				class="text-white bg-green-500 font-medium rounded-lg text-sm px-5 py-2.5"
+				>Добавить</button
+			>
+		</form>
+	</section>
 
-		<section class="grid grid-cols-1 md:grid-cols-2 gap-6">
-			{
-				posts &&
-					posts.map(post => (
-						<article class="bg-zinc-50 border rounded-2xl p-6">
-							<div class="flex flex-col gap-6">
-								<div>
-									<label for="title" class="block mb-2 text-sm font-medium text-gray-900">
-										Заголовок
-									</label>
-									<input
-										type="text"
-										value={post.Post.title}
-										id="title"
-										placeholder="Название"
-										class="w-full title-input p-3 rounded-md"
-									/>
-								</div>
-								<div>
-									<label
-										for="description"
-										class="block mb-2 text-sm font-medium text-gray-900"
-									>
-										Описание
-									</label>
-									<textarea
-										id="description"
-										placeholder="Начало.."
-										value={post.Post.description || ""}
-										class="description-textarea rounded-md p-3 h-full min-h-[200px] w-full"
-									>
-										{post.Post.description}
-									</textarea>
-								</div>
-								<div>
-									<label for="title" class="block mb-2 text-sm font-medium text-gray-900">
-										Ссылки
-									</label>
-									<input
-										type="text"
-										value={post?.Post?.link}
-										id="link"
-										placeholder="https://"
-										class="w-full title-input p-3 rounded-md"
-									/>
-								</div>
-
-								<div class="flex gap-6 items-center">
-									<button
-										class="w-full text-center text-white bg-purple-500 font-medium rounded-lg text-sm px-5 py-2.5"
-										data-update
-										data-id={`${post.Post.id}`}
-									>
-										Обновить пост
-									</button>
-									<button
-										class="w-full text-center  text-white bg-red-500 font-medium rounded-lg text-sm px-5 py-2.5 "
-										data-delete
-										data-id={`${post.Post.id}`}
-									>
-										Удалить пост
-									</button>
-								</div>
+	<section class="grid grid-cols-1 md:grid-cols-2 gap-6">
+		{
+			posts &&
+				posts.map(post => (
+					<article class="bg-zinc-50 border rounded-2xl p-6">
+						<div class="flex flex-col gap-6">
+							<div>
+								<label for="title" class="block mb-2 text-sm font-medium text-gray-900">
+									Название
+								</label>
+								<input
+									type="text"
+									value={post.Post.title}
+									id="title"
+									placeholder="Название"
+									class="w-full title-input p-3 rounded-md"
+								/>
 							</div>
-						</article>
-					))
-			}
-		</section>
+							<div>
+								<label
+									for="description"
+									class="block mb-2 text-sm font-medium text-gray-900"
+								>
+									Описание
+								</label>
+								<textarea
+									id="description"
+									placeholder="Начало.."
+									class="indent-0 m-0 description-textarea rounded-md p-3 h-full min-h-[200px] w-full"
+								>{post.Post.description.trim()}
+								</textarea>
+							</div>
+							<div>
+								<label for="title" class="block mb-2 text-sm font-medium text-gray-900">
+									Ссылка
+								</label>
+								<input
+									type="text"
+									value={post?.Post?.link}
+									id="link"
+									placeholder="https://"
+									class="w-full title-input p-3 rounded-md"
+								/>
+							</div>
 
-		<script is:inline>
-			function removeHttpsPrefix(input) {
-				const value = input.value
-				if (value.startsWith("https://")) {
-					input.value = value.substring(8) // Удаляем 'https://'
+							<div class="flex gap-6 items-center">
+								<button
+									class="w-full text-center text-white bg-purple-500 font-medium rounded-lg text-sm px-5 py-2.5"
+									data-update
+									data-id={`${post.Post.id}`}
+								>
+									Обновить
+								</button>
+								<button
+									class="w-full text-center  text-white bg-red-600 font-medium rounded-lg text-sm px-5 py-2.5 "
+									data-delete
+									data-id={`${post.Post.id}`}
+								>
+									Удалить
+								</button>
+							</div>
+						</div>
+					</article>
+				))
+		}
+	</section>
+</Base>
+<script is:inline>
+	function removeHttpsPrefix(input) {
+		const value = input.value
+		if (value.startsWith("https://")) {
+			input.value = value.substring(8) // Удаляем 'https://'
+		}
+	}
+</script>
+
+<script is:inline>
+	// delete article
+	const deleteBtns = document.querySelectorAll("[data-delete]")
+	deleteBtns.forEach(btn => {
+		btn.addEventListener("click", e => {
+			const id = btn.getAttribute("data-id")
+			try {
+				fetch(`/api/deletePost/${id}.json`, {
+					method: "DELETE",
+					headers: {
+						"Content-Type": "application/json",
+					},
+				})
+				btn.closest("article")?.remove()
+			} catch (error) {
+				console.error(error)
+			}
+		})
+	})
+
+	// Update articles
+	const updateBtns = document.querySelectorAll("[data-update]")
+	updateBtns.forEach(btn => {
+		btn.addEventListener("click", async e => {
+			const id = e.target.getAttribute("data-id")
+
+			const titleInput = e.target.closest("article").querySelector("#title")
+			const descriptionTextarea = e.target
+				.closest("article")
+				.querySelector("#description")
+			const linkInput = e.target.closest("article").querySelector("#link")
+
+			const title = titleInput.value
+			const description = descriptionTextarea.value
+			const link = linkInput.value
+
+			if (!id || !title.trim() || !description.trim() || !link.trim()) {
+				console.error("All fields are required")
+				return
+			}
+
+			try {
+				const response = await fetch(`/api/updatePost/${id}.json`, {
+					method: "PATCH",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({ title, description, link }),
+				})
+
+				if (response.ok) {
+					// Optional: Check response for success status
+					const result = await response.json()
+					if (result.success) {
+						// Update the UI manually without reloading
+						titleInput.value = title
+						descriptionTextarea.value = description
+						linkInput.value = link
+						alert("Вы успешно обновили информацию")
+					} else {
+						throw new Error(result.message || "Failed to update post")
+					}
+				} else {
+					throw new Error("Failed to update post")
+				}
+			} catch (error) {
+				console.error(error)
+			}
+		})
+	})
+</script>
+
+<script>
+	const addForm = document.querySelector("#add-form")
+
+	// form inputs
+	import sanitizeHtml from "sanitize-html"
+	addForm.addEventListener("submit", async e => {
+		e.preventDefault()
+		try {
+			const formData = new FormData(addForm)
+			const title = sanitizeHtml(formData.get("link-title"))
+			const description = sanitizeHtml(formData.get("link-description"))
+			const link = sanitizeHtml(formData.get("link-href"))
+
+			if (
+				typeof title === "string" &&
+				typeof description === "string" &&
+				typeof link === "string"
+			) {
+				const req = await fetch("/api/addPost.json", {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({
+						title,
+						description,
+						link,
+					}),
+				})
+
+				const { success, data, message } = await req.json()
+
+				if (success) {
+					addForm.reset()
+					location.reload()
+				} else {
+					throw new Error(message)
 				}
 			}
-		</script>
-
-		<script is:inline>
-			// delete article
-			const deleteBtns = document.querySelectorAll("[data-delete]")
-			deleteBtns.forEach(btn => {
-				btn.addEventListener("click", e => {
-					const id = btn.getAttribute("data-id")
-					try {
-						fetch(`/api/deletePost/${id}.json`, {
-							method: "DELETE",
-							headers: {
-								"Content-Type": "application/json",
-							},
-						})
-						btn.closest("article")?.remove()
-					} catch (error) {
-						console.error(error)
-					}
-				})
-			})
-
-			// Update articles
-			const updateBtns = document.querySelectorAll("[data-update]")
-			updateBtns.forEach(btn => {
-				btn.addEventListener("click", async e => {
-					const id = e.target.getAttribute("data-id")
-
-					const titleInput = e.target.closest("article").querySelector("#title")
-					const descriptionTextarea = e.target
-						.closest("article")
-						.querySelector("#description")
-					const linkInput = e.target.closest("article").querySelector("#link")
-
-					const title = titleInput.value
-					const description = descriptionTextarea.value
-					const link = linkInput.value
-
-					if (!id || !title.trim() || !description.trim() || !link.trim()) {
-						console.error("All fields are required")
-						return
-					}
-
-					try {
-						const response = await fetch(`/api/updatePost/${id}.json`, {
-							method: "PATCH",
-							headers: {
-								"Content-Type": "application/json",
-							},
-							body: JSON.stringify({ title, description, link }),
-						})
-
-						if (response.ok) {
-							location.reload()
-						} else {
-							throw new Error("Failed to update post")
-						}
-					} catch (error) {
-						console.error(error)
-					}
-				})
-			})
-		</script>
-
-		<script>
-			const addForm = document.querySelector("#add-form")
-
-			// form inputs
-			import sanitizeHtml from "sanitize-html"
-			addForm.addEventListener("submit", async e => {
-				e.preventDefault()
-				try {
-					const formData = new FormData(addForm)
-					const title = sanitizeHtml(formData.get("link-title"))
-					const description = sanitizeHtml(formData.get("link-description"))
-					const link = sanitizeHtml(formData.get("link-href"))
-
-					if (
-						typeof title === "string" &&
-						typeof description === "string" &&
-						typeof link === "string"
-					) {
-						const req = await fetch("/api/addPost.json", {
-							method: "POST",
-							headers: {
-								"Content-Type": "application/json",
-							},
-							body: JSON.stringify({
-								title,
-								description,
-								link,
-							}),
-						})
-
-						const { success, data, message } = await req.json()
-
-						if (success) {
-							addForm.reset()
-							location.reload()
-						} else {
-							throw new Error(message)
-						}
-					}
-				} catch (e) {
-					if (e instanceof Error) {
-						alert(e.message)
-					}
-					console.error(e)
-				}
-			})
-		</script>
-	</body>
-</html>
+		} catch (e) {
+			if (e instanceof Error) {
+				alert(e.message)
+			}
+			console.error(e)
+		}
+	})
+</script>

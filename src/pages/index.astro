@@ -3,6 +3,9 @@ import { Post, User, asc, db, eq } from "astro:db"
 import { marked } from "marked"
 import Layout from "../layouts/Base.astro"
 
+import TG from "@/components/TG.astro"
+import ZOOM from "@/components/ZOOM.astro"
+
 // вовод с именами пользователей которые добавили пост
 const postsList = await db
 	.select()
@@ -14,21 +17,85 @@ const postsList = await db
 ---
 
 <Layout>
+	<div class="pt-12 pb-28 text-center w-full mx-auto md:max-w-2xl">
+		<h1 class="mb-6 tracking-tighter text-5xl md:text-6xl font-black">
+			Ищите группы по интересу и по вашим задачам 👋
+		</h1>
+		<p class="text-zinc-600">
+			12-ти шаговые группы, проекты и материалы разных зависимостей <i
+				><b>(сообществ)</b></i
+			> и направлений.
+		</p>
+	</div>
+
 	<section class="grid md:grid-cols-2 items-start lg:grid-cols-3 gap-5 grid-cols-1">
 		{
 			postsList &&
-				postsList.map((post: any) => (
-					<article id={`пост: ${post.Post.id}`}>
-						{/* <span class="text-green-500">{post?.User?.username}</span> */}
-						<main class="bg-white border border-gray-200 rounded-lg p-5">
-							<h2 class="text-xl font-bold mb-3">{post.Post.title}</h2>
-							<div class="prose text-sm" set:html={marked(post.Post.description)} />
-							<a href={`https://${post?.Post?.link}`}>
-								{post.Post.link.replace("https://", "")}
-							</a>
-						</main>
-					</article>
-				))
+				postsList
+					.sort((a, b) => b.Post.id - a.Post.id)
+					.map((post, index) => (
+						<article
+							id={`пост: ${post.Post.id}`}
+							class={index === 0 ? "relative ring-1 rounded-lg ring-amber-500" : ""}
+						>
+							<span
+								class={
+									index === 0
+										? "absolute top-1 right-2 text-sm text-amber-500 font-bold"
+										: "hidden"
+								}
+							>
+								новая 🔥
+							</span>
+							{/* <span class="text-green-500">{post?.User?.username}</span> */}
+							<main class="bg-white border rounded-lg border-gray-200  p-5 flex flex-col gap-3">
+								<h2 class="text-xl font-bold">{post.Post.title}</h2>
+								<div class="prose text-sm" set:html={marked(post.Post.description)} />
+								<a
+									href={`https://${post?.Post?.link}`}
+									id="link"
+									target="_blank"
+									class={`text-sm flex justify-center gap-3 items-center px-5 py-2.5 text-center rounded-md 
+    ${
+			post?.Post?.link.startsWith("t.me")
+				? "bg-sky-100 text-sky-700 ring-1 ring-sky-200"
+				: post?.Post?.link.startsWith("zoom")
+					? "bg-blue-100 text-blue-700 ring-1 ring-blue-200"
+					: "bg-green-100 text-green-700 ring-1 ring-green-200"
+		}`}
+								>
+									{post?.Post?.link.startsWith("t.me") ? <TG /> : ""}
+									{post?.Post?.link.startsWith("zoom") ? <ZOOM /> : ""}
+									Войти на группу
+								</a>
+							</main>
+						</article>
+					))
 		}
 	</section>
+
+	<!-- <script>
+		document.querySelector("#link").addEventListener("click", function (event) {
+			event.preventDefault() // Предотвращает переход по ссылке
+
+			// Проверяем, сохранен ли ответ в localStorage
+			const isVerified = localStorage.getItem("isVerified")
+
+			if (isVerified === "true") {
+				// Если ответ уже сохранен, сразу перенаправляем
+				window.location.href = this.href
+			} else {
+				// Если нет сохраненного ответа, задаем вопрос
+				const answer = prompt("АНТИБОТ: Сколько будет 49 - 5?")
+
+				if (answer === "44") {
+					// Если ответ верный, сохраняем информацию в localStorage и перенаправляем
+					localStorage.setItem("isVerified", "true")
+					window.location.href = this.href
+				} else {
+					alert("Неверный ответ! Попробуйте снова.")
+				}
+			}
+		})
+	</script> -->
 </Layout>

@@ -1,8 +1,10 @@
 ---
+import Logo from "@/components/Logo.astro"
+
 const user = Astro.locals.user
 ---
 
-<html lang="en">
+<html lang="ru">
 	<head>
 		<meta charset="utf-8" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -10,17 +12,20 @@ const user = Astro.locals.user
 		<meta name="generator" content={Astro.generator} />
 		<title>Astro</title>
 	</head>
-	<body>
-		<div class="mx-auto container maw-w-4xl">
-			<header class="bg-zinc-100 rounded-xl p-5 flex justify-between items-center">
+	<body class="scroll-smooth bg-zinc-100 text-zinc-900">
+		<div class="mx-auto container max-w-4xl px-5">
+			<header
+				class="bg-white w-full mt-5 rounded-xl py-5 px-5 md:px-8 gap-3 flex justify-between items-center"
+			>
+				<Logo />
 				{
 					user ? (
-						<div class="w-full flex justify-between items-center gap-2">
+						<div class="flex items-center gap-3">
 							<a
-								class=" text-white bg-blue-600 font-medium rounded-lg text-sm px-5 py-2.5 "
+								class=" bg-white transition-all duration-75 ease-linear hover:bg-zinc-100 border font-medium rounded-lg text-sm px-5 py-2.5 "
 								href="/admin"
 							>
-								Перейти в админ панель
+								Добавить
 							</a>
 							<form method="POST" action="/api/signout">
 								<button
@@ -32,14 +37,16 @@ const user = Astro.locals.user
 							</form>
 						</div>
 					) : (
-						<div class="flex flex-col gap-2">
-							<a class="underline" href="/signin">
-								Войти
-							</a>
-						</div>
+						<a
+							class="text-white bg-zinc-900 font-medium rounded-lg text-sm px-5 py-2.5"
+							href="/signin"
+						>
+							Войти
+						</a>
 					)
 				}
 			</header>
+
 			<main class="py-12">
 				<slot />
 			</main>

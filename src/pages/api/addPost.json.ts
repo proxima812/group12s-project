@@ -23,10 +23,6 @@ export const POST: APIRoute = async ({ request, locals }) => {
 			)
 		}
 
-		// const res = await db.insert(Post).values({
-		// 	title: sanitize(title),
-		// 	description: sanitize(description),
-		// })
 
 		const res = await db.insert(Post).values({
 			title: title,
