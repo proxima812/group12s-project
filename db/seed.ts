@@ -4,18 +4,29 @@ export default async function seed() {
 	await db.insert(User).values([
 		{
 			id: "user_id_1",
-			username: "user1",
-			password:
-				"$argon2id$v=19$m=19456,t=2,p=1$AC5gMGrqxRKrco6ITV7PiQ$zjiUdOTviT0EtitFcgIrOLOye2W5/yYgyoVNMla3PH4",
+			username: "admin",
+			password: "root",
 		},
 	])
 	await db.insert(Post).values([
 		{
+			id: 1,
 			userId: "user_id_1",
-			title: "Google1",
-			description:
-				"I found this cool site that can let you say anything you want without accountability!",
-			link: "https://123.com/",
+			title: "mat",
+			description: "nat",
+			link: "https://asda.com/",
 		},
 	])
+	// const queries = []
+
+	// for (let i = 0; i < 25; i++) {
+	// 	queries.push(
+	// 		db.insert(Post).values({
+	// 			title: `Test title ${i}`,
+	// 			description: `Test description ${i}`,
+	// 			link: `https://test.com/${i}`,
+	// 		}),
+	// 	)
+	// }
+	// await db.batch(queries)
 }

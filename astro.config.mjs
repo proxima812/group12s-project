@@ -6,9 +6,12 @@ import vercel from "@astrojs/vercel/serverless";
 
 import webVitals from "@astrojs/web-vitals";
 
+import sitemap from "@astrojs/sitemap";
+
 // https://astro.build/config
 export default defineConfig({
-  integrations: [db(), tailwind(), react(), webVitals()],
+  integrations: [db(), tailwind(), react(), webVitals(), sitemap()],
+  site: 'https://wix.ro',
   output: "server",
   adapter: vercel()
 });

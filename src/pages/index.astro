@@ -13,12 +13,17 @@ const postsList = await db
 	.innerJoin(User, eq(Post.userId, User.id))
 	.orderBy(asc(Post.id))
 
-// export const prerender = false
+// const postsListAA = await db
+// 	.select()
+// 	.from(Post)
+// 	.innerJoin(User, eq(Post.userId, User.id))
+// 	.where(like(Post.title, "%АА%"))
+// 	.orderBy(asc(Post.id))
 ---
 
-<Layout>
-	<div class="pt-12 pb-28 text-center w-full mx-auto md:max-w-2xl">
-		<h1 class="mb-6 tracking-tighter text-5xl md:text-6xl font-black">
+<Layout title="12 шагов: группы, материалы и проекты." description="">
+	<div class="pt-12 flex flex-col gap-6 pb-28 text-center w-full mx-auto md:max-w-2xl">
+		<h1 class="tracking-tighter text-4xl md:text-6xl font-black">
 			Ищите группы по интересу и по вашим задачам 👋
 		</h1>
 		<p class="text-zinc-600">
@@ -26,6 +31,13 @@ const postsList = await db
 				><b>(сообществ)</b></i
 			> и направлений.
 		</p>
+		<aside class="flex justify-center gap-3">
+			<a href="https://t.me/+iFf-oDb60LpmMGFi" target="_blank" class="text-blue-500"
+				>об проекте</a
+			>
+			▫
+			<a href="https://t.me/c/2369001366/2" target="_blank" class="text-blue-500">Поддержать проект</a>
+		</aside>
 	</div>
 
 	<section class="grid md:grid-cols-2 items-start lg:grid-cols-3 gap-5 grid-cols-1">
@@ -36,19 +48,24 @@ const postsList = await db
 					.map((post, index) => (
 						<article
 							id={`пост: ${post.Post.id}`}
-							class={index === 0 ? "relative ring-1 rounded-lg ring-amber-500" : ""}
+							class={
+								index === 0 ? "relative ring-1 rounded-lg ring-amber-500" : "relative"
+							}
 						>
-							<span
-								class={
-									index === 0
-										? "absolute top-1 right-2 text-sm text-amber-500 font-bold"
-										: "hidden"
-								}
+							<main
+								class="bg-white border rounded-lg border-gray-200  
+              p-5 flex flex-col gap-3"
 							>
-								новая 🔥
-							</span>
-							{/* <span class="text-green-500">{post?.User?.username}</span> */}
-							<main class="bg-white border rounded-lg border-gray-200  p-5 flex flex-col gap-3">
+								<div class="flex justify-between items-center">
+									<span class=" font-medium text-zinc-400 text-sm">
+										👤 {post?.User?.username}
+									</span>
+									<span
+										class={index === 0 ? "text-sm text-amber-500 font-bold" : "hidden"}
+									>
+										новая 🔥
+									</span>
+								</div>
 								<h2 class="text-xl font-bold">{post.Post.title}</h2>
 								<div class="prose text-sm" set:html={marked(post.Post.description)} />
 								<a
@@ -73,29 +90,4 @@ const postsList = await db
 					))
 		}
 	</section>
-
-	<!-- <script>
-		document.querySelector("#link").addEventListener("click", function (event) {
-			event.preventDefault() // Предотвращает переход по ссылке
-
-			// Проверяем, сохранен ли ответ в localStorage
-			const isVerified = localStorage.getItem("isVerified")
-
-			if (isVerified === "true") {
-				// Если ответ уже сохранен, сразу перенаправляем
-				window.location.href = this.href
-			} else {
-				// Если нет сохраненного ответа, задаем вопрос
-				const answer = prompt("АНТИБОТ: Сколько будет 49 - 5?")
-
-				if (answer === "44") {
-					// Если ответ верный, сохраняем информацию в localStorage и перенаправляем
-					localStorage.setItem("isVerified", "true")
-					window.location.href = this.href
-				} else {
-					alert("Неверный ответ! Попробуйте снова.")
-				}
-			}
-		})
-	</script> -->
 </Layout>

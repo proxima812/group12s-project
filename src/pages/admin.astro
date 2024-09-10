@@ -18,36 +18,46 @@ const posts = await db
 	.where(eq(User.id, userId))
 ---
 
-<Base>
+<Base title='Админ панель: добавить группу' description=''>
 	<div class="flex mb-6 items-center gap-3">
 		<a href="/" class="text-white bg-blue-500 font-medium rounded-lg text-sm px-5 py-2.5"
 			>Назад</a
 		>
-
 		<span class="">Привет, <b>{user.username}!</b></span>
 	</div>
 	<section class="mb-6 bg-zinc-50 border rounded-2xl">
 		<form id="add-form" class="grid gap-4 p-5">
 			<div>
 				<label for="title-1" class="block text-sm font-medium mb-2">Название</label>
+
 				<input
 					type="text"
 					id={`input-${Math.random} title-1`}
 					name={"Link Title".toLowerCase().replace(" ", "-")}
 					required
 					class="p-3 text-sm title-input rounded-md"
-					placeholder="Название"
+					placeholder="Группа АН"
 				/>
+				<p class="mt-2 text-xs text-red-500">
+					Указывайте аббревиатуру сообщества (АА, АН..)
+				</p>
 			</div>
 			<div>
-				<label for="textarea-1" class="block text-sm font-medium mb-2">Описание</label>
+				<label for="textarea-1" class="block text-sm font-medium mb-2"
+					>Можно использовать <b>Markdown</b> разметку <a
+						target="_blank"
+						rel="noreferrer noopener"
+						class="underline text-blue-500"
+						href="https://www.markdownguide.org/basic-syntax/">markdownguide</a
+					></label
+				>
 				<textarea
 					required
-					class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 min-h-[100px] focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none"
-					id={`input-${Math.random} textarea-1`}
+					class="py-3 px-4 block w-full rounded-lg text-sm min-h-[100px] disabled:opacity-50 disabled:pointer-events-none"
+					id={`input-${Math.random}`}
 					placeholder="Описание"
 					name={"Link Description".toLowerCase().replace(" ", "-")}></textarea>
-				<p class="mt-2 text-xs text-red-500">до 100 символов</p>
+				<p class="mt-2 text-xs text-red-500">до 50 символов</p>
 			</div>
 
 			<div>
