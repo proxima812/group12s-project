@@ -10,8 +10,8 @@ import sitemap from "@astrojs/sitemap";
 
 // https://astro.build/config
 export default defineConfig({
-  integrations: [db(), tailwind(), react(), webVitals(), sitemap()],
-  site: 'https://wix.ro',
-  output: "server",
-  adapter: vercel()
-});
+	integrations: [db(), tailwind(), react(), webVitals(), sitemap()],
+	site: "https://12step.vercel.app/",
+	output: "server",
+	adapter: vercel(),
+})
