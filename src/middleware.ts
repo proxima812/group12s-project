@@ -24,13 +24,13 @@ export const onRequest = defineMiddleware(async (context, next) => {
 		return next()
 	}
 
-  const { session, user } = await lucia.validateSession(sessionId)
-  //
+	const { session, user } = await lucia.validateSession(sessionId)
+	//
 	if (session) {
 		context.locals.user = user
 		context.locals.session = session
 	}
-//
+	//
 	if (session && session.fresh) {
 		const sessionCookie = lucia.createSessionCookie(session.id)
 		context.cookies.set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes)

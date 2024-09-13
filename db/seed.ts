@@ -1,32 +1,22 @@
 import { db, Post, User } from "astro:db"
 
-export default async function seed() {
+export default async function () {
 	await db.insert(User).values([
 		{
-			id: "user_id_1",
-			username: "admin",
-			password: "root",
+			id: "suka_1", // Преобразуйте id в строку, так как в таблице тип text
+			username: "suka",
+			password: "1234",
 		},
 	])
 	await db.insert(Post).values([
 		{
 			id: 1,
-			userId: "user_id_1",
-			title: "mat",
-			description: "nat",
-			link: "https://asda.com/",
+			userId: "suka_1", // userId должен совпадать с id пользователя, который строка
+			title: "title",
+			description: "Hope you like Astro DB!",
+			link: "https://github.com/withastro/astro",
 		},
-	])
-	// const queries = []
+  ])
 
-	// for (let i = 0; i < 25; i++) {
-	// 	queries.push(
-	// 		db.insert(Post).values({
-	// 			title: `Test title ${i}`,
-	// 			description: `Test description ${i}`,
-	// 			link: `https://test.com/${i}`,
-	// 		}),
-	// 	)
-	// }
-	// await db.batch(queries)
 }
+

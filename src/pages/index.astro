@@ -3,6 +3,8 @@ import { Post, User, asc, db, eq } from "astro:db"
 import { marked } from "marked"
 import Layout from "../layouts/Base.astro"
 
+import CardList from "@/components/react/CardList.jsx"
+
 import TG from "@/components/TG.astro"
 import ZOOM from "@/components/ZOOM.astro"
 
@@ -90,5 +92,8 @@ const postsList = await db
 						</article>
 					))
 		}
+
+
+    <!-- <CardList client:load/> -->
 	</section>
 </Layout>
