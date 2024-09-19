@@ -33,7 +33,7 @@ function Search({ searchList }) {
 			/>
 
 			<div
-				className={`absolute top-[66px] rounded-xl border bg-white p-5 left-0 w-full ${query.length > 0 ? "p-5 border" : "p-0 border-none"}`}
+				className={`absolute top-[66px] rounded-xl border bg-white left-0 w-full ${query.length > 0 ? "p-5 border" : "p-0 border-none"}`}
 			>
 				{query.length > 1 && (
 					<p className="text-sm pb-3 text-zinc-400 py-2">
@@ -50,8 +50,16 @@ function Search({ searchList }) {
 						posts.map(post => (
 							<li className={`flex flex-col gap-1 p-3 border rounded-lg `}>
 								<h3 className="font-bold">{post?.Post?.title}</h3>
-								<p className='text-sm text-zinc-400 line-clamp-2'>{post?.Post?.description}</p>
-								<a target='_blank' className='text-blue-500 underline' href={post?.Post?.link}>{post?.Post?.link}</a>
+								<p className="text-sm text-zinc-400 line-clamp-2">
+									{post?.Post?.description}
+								</p>
+								<a
+									target="_blank"
+									className="text-blue-500 underline"
+									href={post?.Post?.link}
+								>
+									{post?.Post?.link}
+								</a>
 							</li>
 						))}
 				</ul>
