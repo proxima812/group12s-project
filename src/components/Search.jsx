@@ -56,7 +56,7 @@ function Search({ searchList }) {
 								<a
 									target="_blank"
 									className="text-blue-500 underline"
-									href={post?.Post?.link}
+									href={`https://${post?.Post?.link}`}
 								>
 									{post?.Post?.link}
 								</a>
