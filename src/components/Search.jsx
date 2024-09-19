@@ -29,7 +29,7 @@ function Search({ searchList }) {
 				className="w-full p-5 text-zinc-600  rounded-xl border"
 				value={query}
 				onChange={handleOnSearch}
-				placeholder="Искать по сообществам, информации..."
+				placeholder="Искать по сообществам, описанию..."
 			/>
 
 			<div
