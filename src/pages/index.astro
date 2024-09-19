@@ -3,8 +3,6 @@ import { Post, User, asc, db, eq } from "astro:db"
 import { marked } from "marked"
 import Layout from "../layouts/Base.astro"
 
-import CardList from "@/components/react/CardList.jsx"
-
 import TG from "@/components/TG.astro"
 import ZOOM from "@/components/ZOOM.astro"
 
@@ -21,6 +19,8 @@ const postsList = await db
 // 	.innerJoin(User, eq(Post.userId, User.id))
 // 	.where(like(Post.title, "%АА%"))
 // 	.orderBy(asc(Post.id))
+
+Astro.response.headers.set("CDN-Cache-Control", "public, max-age=172800, must-revalidate")
 ---
 
 <Layout title="12 шагов: группы, материалы и проекты." description="">
@@ -33,12 +33,25 @@ const postsList = await db
 				><b>(сообществ)</b></i
 			> и направлений.
 		</p>
+		<a
+			href="https://t.me/all_groups12/5"
+			tabindex="_blank"
+			class="bg-red-50 hover:bg-red-100 transition-colors duration-75 ease-linear rounded-lg px-3 py-1 ring-1 ring-red-200 text-red-500"
+		>
+			Нашли свою группу, но ее добавили без вашего разрешения? - написать нам.
+		</a>
 		<aside class="flex justify-center gap-3">
-			<a href="https://t.me/all_groups12" target="_blank" class="text-blue-500"
+			<a
+				href="https://t.me/all_groups12"
+				target="_blank"
+				class="bg-blue-50 hover:bg-blue-100 transition-colors duration-75 ease-linear rounded-lg px-3 py-1 ring-1 ring-blue-200 text-blue-500"
 				>об проекте</a
 			>
-			▫
-			<a href="https://t.me/all_groups12/3" target="_blank" class="text-blue-500"
+
+			<a
+				href="https://t.me/all_groups12/3"
+				target="_blank"
+				class="bg-blue-50 hover:bg-blue-100 transition-colors duration-75 ease-linear rounded-lg px-3 py-1 ring-1 ring-blue-200 text-blue-500"
 				>Обратная связь</a
 			>
 		</aside>
@@ -77,13 +90,13 @@ const postsList = await db
 									id="link"
 									target="_blank"
 									class={`text-sm flex justify-center gap-3 items-center px-5 py-2.5 text-center rounded-md 
-    ${
-			post?.Post?.link.startsWith("t.me")
-				? "bg-sky-100 text-sky-700 ring-1 ring-sky-200"
-				: post?.Post?.link.startsWith("zoom")
-					? "bg-blue-100 text-blue-700 ring-1 ring-blue-200"
-					: "bg-green-100 text-green-700 ring-1 ring-green-200"
-		}`}
+                  ${
+										post?.Post?.link.startsWith("t.me")
+											? "bg-sky-100 text-sky-700 ring-1 ring-sky-200 transition-colors duration-75 ease-linear hover:bg-sky-200"
+											: post?.Post?.link.startsWith("zoom")
+												? "bg-blue-100 text-blue-700 ring-1 ring-blue-200 transition-colors duration-75 ease-linear hover:bg-blue-200"
+												: "bg-green-100 text-green-700 ring-1 ring-green-200 transition-colors duration-75 ease-linear hover:bg-green-200"
+									}`}
 								>
 									{post?.Post?.link.startsWith("t.me") ? <TG /> : ""}
 									{post?.Post?.link.startsWith("zoom") ? <ZOOM /> : ""}

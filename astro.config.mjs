@@ -11,5 +11,7 @@ export default defineConfig({
 	integrations: [db(), tailwind(), react(), sitemap()],
 	site: "https://group12s.netlify.app",
 	output: "server",
-	adapter: netlify(),
+	adapter: netlify({
+		cacheOnDemandPages: true,
+	}),
 })
