@@ -71,7 +71,11 @@ Astro.response.headers.set("CDN-Cache-Control", "public, max-age=172800, must-re
 						<article
 							id={`пост: ${post.Post.id}`}
 							class={
-								index === 0 ? "relative ring-1 rounded-lg ring-amber-500" : "relative"
+								index === 0
+									? "relative ring-1 rounded-lg ring-amber-500"
+									: index === 1
+										? "relative ring-1 rounded-lg ring-blue-500"
+										: "relative"
 							}
 						>
 							<main
@@ -79,14 +83,19 @@ Astro.response.headers.set("CDN-Cache-Control", "public, max-age=172800, must-re
               p-5 flex flex-col gap-3"
 							>
 								<div class="flex justify-between items-center">
-									<span class=" font-medium text-zinc-400 text-sm">
+									<span class=" font-medium text-zinc-400 text-xs">
 										👤 {post?.User?.username}
 									</span>
 									<span
 										class={index === 0 ? "text-sm text-amber-500 font-bold" : "hidden"}
 									>
-										новая 🔥
+										новая 🎉
 									</span>
+									{index === 1 ? (
+										<span class="text-sm text-blue-500 font-bold">вторая 🎁</span>
+									) : (
+										""
+									)}
 								</div>
 								<h2 class="text-xl font-bold">{post.Post.title}</h2>
 								<div class="prose text-sm" set:html={marked(post.Post.description)} />
