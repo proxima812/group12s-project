@@ -18,10 +18,7 @@ const options = { year: "numeric", month: "long", day: "numeric" }
 const publishedDate = new Date(entry.data.publishedDate)
 const formattedDate = publishedDate.toLocaleDateString("ru-RU", options)
 
-Astro.response.headers.set(
-	"CDN-Cache-Control",
-	"public, max-age=2592000, must-revalidate",
-)
+
 ---
 
 <Base title={entry.data.title} description={entry.data.description}>
