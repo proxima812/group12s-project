@@ -1,4 +1,5 @@
 import Fuse from "fuse.js"
+import { marked } from "marked"
 import { useState } from "react"
 // Configs fuse.js
 // https://fusejs.io/api/options.html
@@ -50,9 +51,10 @@ function Search({ searchList }) {
 						posts.map(post => (
 							<li className={`flex flex-col gap-1 p-3 border rounded-lg `}>
 								<h3 className="font-bold">{post?.Post?.title}</h3>
-								<p className="text-sm text-zinc-400 line-clamp-2">
-									{post?.Post?.description}
-								</p>
+								<p
+									className="text-sm text-zinc-400 line-clamp-2"
+									dangerouslySetInnerHTML={{ __html: marked(post?.Post?.description) }}
+								/>
 								<a
 									target="_blank"
 									className="text-blue-500 underline"

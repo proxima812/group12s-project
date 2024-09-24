@@ -18,7 +18,7 @@ const posts = await db
 	.where(eq(User.id, userId))
 ---
 
-<Base title='Админ панель: добавить группу' description=''>
+<Base title="Админ панель: добавить группу" description="">
 	<div class="flex mb-6 items-center gap-3">
 		<a href="/" class="text-white bg-blue-500 font-medium rounded-lg text-sm px-5 py-2.5"
 			>Назад</a
@@ -53,11 +53,12 @@ const posts = await db
 				>
 				<textarea
 					required
-					class="py-3 px-4 block w-full rounded-lg text-sm min-h-[100px] disabled:opacity-50 disabled:pointer-events-none"
+					class="input-textarea py-3 px-4 block w-full rounded-lg text-sm min-h-[100px] disabled:opacity-50 disabled:pointer-events-none"
 					id={`input-${Math.random}`}
 					placeholder="Описание"
 					name={"Link Description".toLowerCase().replace(" ", "-")}></textarea>
 				<p class="mt-2 text-xs text-red-500">до 50 символов</p>
+				<!-- <p id="error-message">ошибка</p> -->
 			</div>
 
 			<div>
@@ -155,6 +156,34 @@ const posts = await db
 		}
 	}
 </script>
+
+<!-- <script is:inline>
+	// Подключаем bad-words
+	const filter = new Filter()
+
+	// Ограничение символов
+	const maxLength = 50
+	const textarea = document.getElementsByClassName("input-textarea")
+	const errorMessage = document.getElementById("error-message")
+
+	// Обработчик ввода текста
+	textarea.addEventListener("input", function () {
+		const text = textarea.value
+
+		// Проверяем на количество символов
+		if (text.length > maxLength) {
+			textarea.value = text.substring(0, maxLength)
+			errorMessage.textContent = `Максимум ${maxLength} символов.`
+		} else {
+			errorMessage.textContent = "" // Очищаем сообщение об ошибке
+		}
+
+		// Проверяем на наличие нецензурных слов
+		if (filter.isProfane(text)) {
+			errorMessage.textContent = "Текст содержит запрещенные слова."
+		}
+	})
+</script> -->
 
 <script is:inline>
 	// delete article
