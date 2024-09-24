@@ -2,6 +2,8 @@ import { lucia } from "@/auth"
 import type { APIContext } from "astro"
 import { db, eq, User } from "astro:db"
 import { Argon2id } from "oslo/password"
+
+
 export async function POST(context: APIContext): Promise<Response> {
 	//read the form data
 	const formData = await context.request.formData()

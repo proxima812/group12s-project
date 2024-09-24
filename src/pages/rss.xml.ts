@@ -22,8 +22,8 @@ export async function GET(context) {
 
 		// Генерируем RSS
 		return rss({
-			title: "Buzz’s Blog",
-			description: "A humble Astronaut’s guide to the stars",
+			title: "Карты групп",
+			description: "12 шагов",
 			site: context.site,
 			items: items,
 		})

@@ -4,6 +4,7 @@ import { db, User } from "astro:db"
 import { generateId } from "lucia"
 import { Argon2id } from "oslo/password"
 
+
 export async function POST(context: APIContext): Promise<Response> {
 	//Parse the form data
 	const formData = await context.request.formData()

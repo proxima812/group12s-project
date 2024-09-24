@@ -1,6 +1,7 @@
 import type { APIRoute } from "astro"
 import { asc, db, eq, Post, User } from 'astro:db'
 
+
 export const GET: APIRoute = async () => {
 	try {
 		// Выполняем запрос к базе данных для получения постов и имен пользователей

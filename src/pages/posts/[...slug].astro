@@ -1,0 +1,41 @@
+---
+import Base from "@/layouts/Base.astro"
+import { getCollection } from "astro:content"
+
+export async function getStaticPaths() {
+	const blogEntries = await getCollection("posts")
+	return blogEntries.map(entry => ({
+		params: { slug: entry.slug },
+		props: { entry },
+	}))
+}
+
+export const prerender = true
+const { entry } = Astro.props
+const { Content } = await entry.render()
+
+const options = { year: "numeric", month: "long", day: "numeric" }
+const publishedDate = new Date(entry.data.publishedDate)
+const formattedDate = publishedDate.toLocaleDateString("ru-RU", options)
+
+Astro.response.headers.set(
+	"CDN-Cache-Control",
+	"public, max-age=2592000, must-revalidate",
+)
+---
+
+<Base title={entry.data.title} description={entry.data.description}>
+	<aside class="pb-6 flex flex-col gap-3">
+		<a
+			href="/posts"
+			aria-label="Назад к постам"
+			class="bg-white transition-all duration-75 ease-linear hover:bg-zinc-100 border font-medium rounded-lg text-sm px-3.5 py-1.5 md:px-5 md:py-2.5 self-start"
+			>Назад</a
+		>
+		<h1 class="text-4xl font-black tracking-tighter">{entry.data.title}</h1>
+		<time class="text-sm text-zinc-600" datetime={entry.data.publishedDate.toISOString()}>
+			{formattedDate}
+		</time>
+	</aside>
+	<main class="prose prose-lg prose-blue max-w-none"><Content /></main>
+</Base>

@@ -8,8 +8,19 @@ import netlify from "@astrojs/netlify"
 
 // https://astro.build/config
 export default defineConfig({
-	integrations: [db(), tailwind(), react(), sitemap()],
 	site: "https://group12s.netlify.app",
+	integrations: [
+		db(),
+		tailwind(),
+		react(),
+		sitemap({
+			filter: page =>
+				page !== "https://group12s.netlify.app/signin" &&
+				page !== "https://group12s.netlify.app/signup" &&
+				page !== "https://group12s.netlify.app/404" &&
+				page !== "https://group12s.netlify.app/admin",
+		}),
+	],
 	output: "server",
 	adapter: netlify({
 		cacheOnDemandPages: true,
