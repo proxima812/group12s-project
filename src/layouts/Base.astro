@@ -1,7 +1,7 @@
 ---
 import Logo from "@/components/Logo.astro"
+import Header from '@/components/partials/Header.astro'
 
-const user = Astro.locals.user
 
 function formatCanonicalURL(url: string | URL) {
 	const path = url.toString()
@@ -27,7 +27,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site)
 ---
 
 <html lang="ru">
-	<head>
+	<head class=" scroll-smooth">
 		<meta charset="utf-8" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="viewport" content="width=device-width" />
@@ -57,40 +57,10 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site)
 
 		<title>{title}</title>
 	</head>
-	<body class="scroll-smooth bg-zinc-100 text-zinc-900">
+	<body class="scroll-smooth bg-zinc-200/50 text-zinc-900">
 		<div class="mx-auto container max-w-4xl px-5">
-			<header
-				class="bg-white w-full mt-5 rounded-xl py-5 px-5 md:px-8 gap-3 flex justify-between items-center"
-			>
-				<a href="/"><Logo /></a>
-				{
-					user ? (
-						<div class="flex items-center gap-3">
-							<a
-								class=" bg-white transition-all duration-75 ease-linear hover:bg-zinc-100 border font-medium rounded-lg text-sm px-5 py-2.5 "
-								href="/admin"
-							>
-								Добавить
-							</a>
-							<form method="POST" action="/api/signout">
-								<button
-									class=" text-white bg-red-600 font-medium rounded-lg text-sm px-5 py-2.5 "
-									type="submit"
-								>
-									Выйти
-								</button>
-							</form>
-						</div>
-					) : (
-						<a
-							class="text-white bg-zinc-900 font-medium rounded-lg text-sm px-5 py-2.5"
-							href="/signin"
-						>
-							Войти
-						</a>
-					)
-				}
-			</header>
+	
+      <Header />
 
 			<main class="py-12">
 				<slot />

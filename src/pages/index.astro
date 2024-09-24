@@ -1,11 +1,12 @@
 ---
 import { Post, User, asc, db, eq } from "astro:db"
-import { marked } from "marked"
 import Layout from "../layouts/Base.astro"
 
+import CardsList from "@/components/react/CardsList"
+
 import Search from "@/components/Search.jsx"
-import TG from "@/components/TG.astro"
-import ZOOM from "@/components/ZOOM.astro"
+import Main from "@/components/Main.astro"
+import ArticleCard from "@/components/ArticleCard.astro"
 
 // вовод с именами пользователей которые добавили пост
 const postsList = await db
@@ -14,154 +15,70 @@ const postsList = await db
 	.innerJoin(User, eq(Post.userId, User.id))
 	.orderBy(asc(Post.id))
 
-// const postsListAA = await db
-// 	.select()
-// 	.from(Post)
-// 	.innerJoin(User, eq(Post.userId, User.id))
-// 	.where(like(Post.title, "%АА%"))
-// 	.orderBy(asc(Post.id))
-
 Astro.response.headers.set("CDN-Cache-Control", "public, max-age=172800, must-revalidate")
 ---
 
-<Layout title="12 шагов: группы, материалы и проекты." description="">
-	<div class="pt-12 flex flex-col gap-6 pb-28 text-center w-full mx-auto md:max-w-2xl">
-		<h1 class="tracking-tighter text-4xl md:text-6xl font-black">
-			Все 12-ти шаговые группы, сообщества и проекты в одном месте
-		</h1>
-		<p class="text-zinc-600">
-			12-ти шаговые группы, проекты и материалы разных зависимостей <i
-				><b>(сообществ)</b></i
-			> и направлений.
-		</p>
-		<a
-			href="https://t.me/all_groups12/5"
-			tabindex="_blank"
-			class="bg-red-50 hover:bg-red-100 transition-colors duration-75 ease-linear rounded-lg px-3 py-1 ring-1 ring-red-200 text-red-500"
-		>
-			Нашли свою группу, но ее добавили без вашего разрешения? - написать нам.
-		</a>
-		<aside class="flex justify-center gap-3">
-			<a
-				href="https://t.me/all_groups12"
-				target="_blank"
-				class="bg-blue-50 hover:bg-blue-100 transition-colors duration-75 ease-linear rounded-lg px-3 py-1 ring-1 ring-blue-200 text-blue-500"
-				>об проекте</a
-			>
-
-			<a
-				href="https://t.me/all_groups12/3"
-				target="_blank"
-				class="bg-blue-50 hover:bg-blue-100 transition-colors duration-75 ease-linear rounded-lg px-3 py-1 ring-1 ring-blue-200 text-blue-500"
-				>Обратная связь</a
-			>
-		</aside>
-	</div>
+<Layout title="12 шагов: группы, материалы и проекты.">
+	<section
+		class="pt-12 flex flex-col gap-6 pb-28 text-center w-full mx-auto md:max-w-2xl"
+	>
+		<Main />
+	</section>
 
 	<section class="mb-12">
 		<Search searchList={postsList} client:visible />
 	</section>
 
 	<section class="grid md:grid-cols-2 items-start lg:grid-cols-3 gap-5 grid-cols-1">
-		{
+		<!-- {
 			postsList &&
 				postsList
 					.sort((a, b) => b.Post.id - a.Post.id)
-					.map((post, index) => (
-						<article
-							id={`пост: ${post.Post.id}`}
-							class={
-								index === 0
-									? "relative ring-1 rounded-lg ring-amber-500"
-									: index === 1
-										? "relative ring-1 rounded-lg ring-blue-500"
-										: "relative"
-							}
-						>
-							<main
-								class="bg-white border rounded-lg border-gray-200  
-              p-5 flex flex-col gap-3"
-							>
-								<div class="flex justify-between items-center">
-									<span class=" font-medium text-zinc-400 text-xs">
-										👤 {post?.User?.username}
-									</span>
-									<span
-										class={index === 0 ? "text-sm text-amber-500 font-bold" : "hidden"}
-									>
-										новая 🎉
-									</span>
-									{index === 1 ? (
-										<span class="text-sm text-blue-500 font-bold">вторая 🎁</span>
-									) : (
-										""
-									)}
-								</div>
-								<h2 class="text-xl font-bold">{post.Post.title}</h2>
-								<div class="prose text-sm" set:html={marked(post.Post.description)} />
-								<a
-									href={`https://${post?.Post?.link}`}
-									id="link"
-									target="_blank"
-									class={`text-sm flex justify-center gap-3 items-center px-5 py-2.5 text-center rounded-md 
-                  ${
-										post?.Post?.link.startsWith("t.me")
-											? "bg-sky-100 text-sky-700 ring-1 ring-sky-200 transition-colors duration-75 ease-linear hover:bg-sky-200"
-											: post?.Post?.link.startsWith("zoom")
-												? "bg-blue-100 text-blue-700 ring-1 ring-blue-200 transition-colors duration-75 ease-linear hover:bg-blue-200"
-												: "bg-green-100 text-green-700 ring-1 ring-green-200 transition-colors duration-75 ease-linear hover:bg-green-200"
-									}`}
-								>
-									{post?.Post?.link.startsWith("t.me") ? <TG /> : ""}
-									{post?.Post?.link.startsWith("zoom") ? <ZOOM /> : ""}
-									Перейте по ссылке
-								</a>
-							</main>
-						</article>
-					))
-		}
-
-		<script is:inline>
-			// Фиксируем время загрузки страницы
-			const pageLoadTime = Date.now()
-
-			// Обработчик кликов по ссылкам
-			document.body.addEventListener("click", function (e) {
-				// Проверяем, что клик был по ссылке с id="link"
-				if (e.target.tagName === "A" && e.target.id === "link") {
-					// Останавливаем стандартное поведение ссылки
-					e.preventDefault()
-
-					// Время клика
-					const clickTime = Date.now()
-
-					// Проверяем, произошло ли время между загрузкой и кликом слишком быстро
-					if (clickTime - pageLoadTime < 1000) {
-						// 1000 мс = 1 секунда
-						// Сообщаем пользователю
-						alert(
-							"Доступ заблокирован. Пожалуйста, попробуйте снова через несколько секунд.",
-						)
-					} else {
-						// Отложенная обработка клика
-						setTimeout(() => {
-							// Показать пользователю диалоговое окно для подтверждения
-							const isHuman = confirm("Вы человек? Нажмите 'Да/Ок', чтобы продолжить.")
-
-							// Если пользователь подтвердил, что он человек
-							if (isHuman) {
-								// Перенаправить пользователя на нужную ссылку
-								window.open(e.target.href, "_blank")
-							} else {
-								// Если не подтвердил, выдать сообщение
-								alert(
-									"Доступ заблокирован. Подтвердите, что вы человек, чтобы продолжить.",
-								)
-							}
-						}, 0) // Используем setTimeout для отложенной обработки
-					}
-				}
-			})
-		</script>
+					.map((post, index) => <ArticleCard post={post} index={index} />)
+		} -->
 	</section>
+	<section class="grid md:grid-cols-2 items-start lg:grid-cols-3 gap-8 grid-cols-1">
+		<CardsList client:load />
+	</section>
+
+	<script is:inline>
+		// Фиксируем время загрузки страницы
+		const pageLoadTime = Date.now()
+
+		// Обработчик кликов по ссылкам
+		document.body.addEventListener("click", function (e) {
+			// Проверяем, что клик был по ссылке с id="link"
+			if (e.target.tagName === "A" && e.target.id === "link") {
+				// Останавливаем стандартное поведение ссылки
+				e.preventDefault()
+
+				// Время клика
+				const clickTime = Date.now()
+
+				// Проверяем, произошло ли время между загрузкой и кликом слишком быстро
+				if (clickTime - pageLoadTime < 1000) {
+					// 1000 мс = 1 секунда
+					// Сообщаем пользователю
+					alert(
+						"Доступ заблокирован. Пожалуйста, попробуйте снова через несколько секунд.",
+					)
+				} else {
+					// Отложенная обработка клика
+					setTimeout(() => {
+						// Показать пользователю диалоговое окно для подтверждения
+						const isHuman = confirm("Вы человек? Нажмите 'Да/Ок', чтобы продолжить.")
+
+						// Если пользователь подтвердил, что он человек
+						if (isHuman) {
+							// Перенаправить пользователя на нужную ссылку
+							window.open(e.target.href, "_blank")
+						} else {
+							// Если не подтвердил, выдать сообщение
+							alert("Доступ заблокирован. Подтвердите, что вы человек, чтобы продолжить.")
+						}
+					}, 0) // Используем setTimeout для отложенной обработки
+				}
+			}
+		})
+	</script>
 </Layout>

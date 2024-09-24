@@ -48,5 +48,5 @@ export async function POST(context: APIContext): Promise<Response> {
 	const session = await lucia.createSession(foundUser.id, {})
 	const sessionCookie = lucia.createSessionCookie(session.id)
 	context.cookies.set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes)
-	return context.redirect("/")
+	return context.redirect("/admin")
 }

@@ -1,0 +1,46 @@
+---
+import Links from "@/components/Links.astro"
+import SideMenu from "@/components/react/SideMenu"
+import Logo from "../Logo.astro"
+const user = Astro.locals.user
+---
+
+<header
+	class="bg-white w-full mt-5 rounded-xl py-5 px-5 md:px-8 gap-3 flex justify-between items-center"
+>
+	<Logo />
+
+	{
+		user ? (
+			<div class="flex items-center gap-3">
+				<a
+					class="bg-white transition-all duration-75 ease-linear hover:bg-zinc-100 border font-medium rounded-lg text-sm px-3.5 py-1.5 md:px-5 md:py-2.5 "
+					href="/admin"
+				>
+					Добавить
+				</a>
+				<form method="POST" action="/api/signout">
+					<button
+						class=" text-white bg-red-600 font-medium rounded-lg text-sm px-3.5 py-1.5 md:px-5 md:py-2.5 "
+						type="submit"
+					>
+						Выйти
+					</button>
+				</form>
+				<SideMenu client:idle />
+				<Links />
+			</div>
+		) : (
+			<div class="flex items-center gap-2">
+				<a
+					class="text-white bg-zinc-900 font-medium rounded-lg text-sm px-3.5 py-1.5 md:px-5 md:py-2.5"
+					href="/signin"
+				>
+					Войти
+				</a>
+				<SideMenu client:idle />
+				<Links />
+			</div>
+		)
+	}
+</header>
