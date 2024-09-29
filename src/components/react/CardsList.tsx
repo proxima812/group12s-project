@@ -33,7 +33,7 @@ const CardsList = () => {
 			// Проверяем, дошел ли пользователь до конца страницы
 			if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100) {
 				// Увеличиваем количество видимых карточек на 10
-				setVisibleCount(prevCount => prevCount + 10)
+				setVisibleCount(prevCount => prevCount + 3)
 			}
 		}
 
@@ -59,9 +59,11 @@ const CardsList = () => {
 
 	return (
 		<>
-			{displayedPosts.map((post, index) => (
-				<ArticleCard key={post.id} post={post} index={index} />
-			))}
+			{displayedPosts
+				.sort((a, b) => b.id - a.id)
+				.map((post, index) => (
+					<ArticleCard key={post.id} post={post} index={index} />
+				))}
 
 			{/* Если есть ещё посты для отображения и идет загрузка (больше данных, чем отображено) */}
 			{visibleCount < allPosts.length && (
