@@ -1,32 +1,53 @@
-import { useEffect, useState } from "react"
+import useSWR from "swr"
+import { useState, useEffect } from "react"
 import ArticleCard from "./ArticleCard"
 import PreloaderCard from "./PreloaderCard"
 
-const CardsList = () => {
-	const [posts, setPosts] = useState([])
-	const [loading, setLoading] = useState(true)
-	const [error, setError] = useState(null)
+// Функция для запроса данных
+const fetcher = url =>
+	fetch(url).then(res => {
+		if (!res.ok) {
+			throw new Error("Ошибка при загрузке постов")
+		}
+		return res.json()
+	})
 
+const CardsList = () => {
+	// Используем SWR для получения всех данных
+	const { data: allPosts, error } = useSWR("/api/cards", fetcher)
+
+	// Стейт для порционной загрузки карточек
+	const [displayedPosts, setDisplayedPosts] = useState([])
+	const [visibleCount, setVisibleCount] = useState(3) // Количество отображаемых карточек
+
+	// Обновляем отображаемые посты при изменении видимого количества
 	useEffect(() => {
-		const fetchPosts = async () => {
-			try {
-				const response = await fetch("/api/cards") // Replace with your API path
-				if (!response.ok) {
-					throw new Error("Ошибка при загрузке постов")
-				}
-				const data = await response.json()
-				setPosts(data)
-			} catch (err) {
-				setError(err.message)
-			} finally {
-				setLoading(false)
+		if (allPosts) {
+			setDisplayedPosts(allPosts.slice(0, visibleCount))
+		}
+	}, [allPosts, visibleCount])
+
+	// Добавляем слушатель прокрутки
+	useEffect(() => {
+		const handleScroll = () => {
+			// Проверяем, дошел ли пользователь до конца страницы
+			if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100) {
+				// Увеличиваем количество видимых карточек на 10
+				setVisibleCount(prevCount => prevCount + 10)
 			}
 		}
 
-		fetchPosts()
+		window.addEventListener("scroll", handleScroll)
+		return () => window.removeEventListener("scroll", handleScroll)
 	}, [])
 
-	if (loading) {
+	// Обработка состояния ошибки
+	if (error) {
+		return <p>Ошибка: {error.message}</p>
+	}
+
+	// Показываем прелоадеры, пока данные загружаются
+	if (!allPosts) {
 		return (
 			<>
 				<PreloaderCard />
@@ -36,17 +57,20 @@ const CardsList = () => {
 		)
 	}
 
-	if (error) {
-		return <p>Ошибка: {error}</p>
-	}
-
 	return (
 		<>
-			{posts
-				.sort((a, b) => b.id - a.id)
-				.map((post, index) => {
-					return <ArticleCard key={post.id} post={post} index={index} />
-				})}
+			{displayedPosts.map((post, index) => (
+				<ArticleCard key={post.id} post={post} index={index} />
+			))}
+
+			{/* Если есть ещё посты для отображения и идет загрузка (больше данных, чем отображено) */}
+			{visibleCount < allPosts.length && (
+				<>
+					<PreloaderCard />
+					<PreloaderCard />
+					<PreloaderCard />
+				</>
+			)}
 		</>
 	)
 }
