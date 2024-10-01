@@ -27,12 +27,12 @@ const ArticleCard = ({ post, index }) => {
 			id={`${post.id}`}
 			className={
 				index === 0
-					? "relative border-2 rounded-xl border-amber-500"
+					? "relative vcard border-2 rounded-xl border-amber-500"
 					: index === 1
-						? "relative border-2 rounded-xl border-blue-500"
+						? "relative vcard border-2 rounded-xl border-blue-500"
 						: index === 2
-							? "relative border-2 rounded-xl border-red-500"
-							: "relative"
+							? "relative vcard border-2 rounded-xl border-red-500"
+							: "relative vcard"
 			}
 		>
 			<main className="bg-white rounded-xl border-gray-200 p-5 flex flex-col gap-3">
@@ -43,16 +43,16 @@ const ArticleCard = ({ post, index }) => {
 					</div>
 				)}
 				<div className="flex justify-between items-center">
-					<span className="font-medium text-zinc-400 text-xs">👤 {post.username}</span>
+					<span className="font-medium text-zinc-400 text-xs fn">👤 {post.username}</span>
 					<span className={index === 0 ? "text-sm text-amber-500 font-bold" : "hidden"}>
 						новая 🔥
 					</span>
 					{index === 1 ? <span className="text-sm text-blue-500 font-bold">💎</span> : ""}
 					{index === 2 ? <span className="text-sm text-red-500 font-bold">🪭</span> : ""}
 				</div>
-				<h2 className="text-xl font-bold">{post.title}</h2>
+				<h2 className="text-xl font-bold org">{post.title}</h2>
 				<div
-					className="prose text-sm"
+					className="prose text-sm vevent"
 					dangerouslySetInnerHTML={{ __html: marked(post.description) }}
 				/>
 				<a
@@ -60,7 +60,7 @@ const ArticleCard = ({ post, index }) => {
 					id="link"
 					target="_blank"
 					rel="noopener noreferrer"
-					className={`text-sm flex justify-center gap-3 items-center px-5 py-2.5 text-center rounded-md 
+					className={`description text-sm flex justify-center gap-3 items-center px-5 py-2.5 text-center rounded-md 
                 ${
 									post.link.startsWith("t.me")
 										? "bg-sky-100 text-sky-700 ring-1 ring-sky-200 transition-colors duration-75 ease-linear hover:bg-sky-200"
