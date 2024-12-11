@@ -10,13 +10,12 @@ const supabase = createClient(
 	"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZrd2l2eWNhYWNncHV3ZnZvemxwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzM5MDc4MTEsImV4cCI6MjA0OTQ4MzgxMX0.44dYay0RWos4tqwuj6H-ylqN4TrAIabeQLNzBn6Xuy0",
 )
 
-
 export const POST: APIRoute = async ({ request }) => {
 	try {
 		// Чтение данных из запроса
-		const { message, userId } = await request.json()
+		const { desc, id } = await request.json()
 
-		if (!message) {
+		if (!desc) {
 			return new Response(JSON.stringify({ error: "Message is required" }), {
 				status: 400,
 				headers: {
@@ -26,10 +25,13 @@ export const POST: APIRoute = async ({ request }) => {
 			})
 		}
 
+		// Преобразуем id в INT8 (64-битное целое число)
+		const intId = BigInt(id)
+
 		// Добавление записи в таблицу posts в Supabase
 		const { data, error } = await supabase
 			.from("posts")
-			.insert([{ id: userId, desc: message }])
+			.insert([{ id: intId, desc: desc }])
 
 		// Обработка ошибок, если они возникнут
 		if (error) {
