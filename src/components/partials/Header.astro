@@ -1,5 +1,4 @@
 ---
-import Links from "@/components/Links.astro"
 import SideMenu from "@/components/react/SideMenu"
 import Logo from "../Logo.astro"
 const user = Astro.locals.user
@@ -9,6 +8,14 @@ const user = Astro.locals.user
 	class="bg-white w-full mt-5 rounded-xl py-5 px-5 md:px-8 gap-3 flex justify-between items-center"
 >
 	<Logo />
+
+	{
+		!!user && (
+			<span class="text-zinc-400 flex gap-1">
+				Привет, <b>{user.username}</b>
+			</span>
+		)
+	}
 
 	{
 		user ? (
@@ -28,7 +35,7 @@ const user = Astro.locals.user
 					</button>
 				</form>
 				<SideMenu client:idle />
-				<Links />
+				{/* <Links /> */}
 			</div>
 		) : (
 			<div class="flex items-center gap-2">
@@ -39,7 +46,7 @@ const user = Astro.locals.user
 					Войти
 				</a>
 				<SideMenu client:idle />
-				<Links />
+				{/* <Links /> */}
 			</div>
 		)
 	}
