@@ -9,13 +9,14 @@ import Main from "@/components/Main.astro"
 import ArticleCard from "@/components/ArticleCard.astro"
 
 // вовод с именами пользователей которые добавили пост
-const postsList = await db
-	.select()
-	.from(Post)
-	.innerJoin(User, eq(Post.userId, User.id))
-	.orderBy(asc(Post.id))
+// const postsList = await db
+// 	.select()
+// 	.from(Post)
+// 	.innerJoin(User, eq(Post.userId, User.id))
+// 	.orderBy(asc(Post.id))
 
 // Astro.response.headers.set("CDN-Cache-Control", "public, max-age=172800, must-revalidate")
+
 ---
 
 <Layout title="12 шагов: группы, материалы и проекты.">
@@ -25,10 +26,8 @@ const postsList = await db
 		<Main />
 	</section>
 
-
-
 	<section class="mb-12">
-		{postsList && <Search searchList={postsList} client:visible />}
+		<!-- {postsList && <Search searchList={postsList} client:visible />} -->
 	</section>
 
 	<section class="grid md:grid-cols-2 items-start lg:grid-cols-3 gap-5 grid-cols-1">
@@ -40,47 +39,6 @@ const postsList = await db
 		} -->
 	</section>
 	<section class="grid md:grid-cols-2 items-start lg:grid-cols-3 gap-8 grid-cols-1">
-		{postsList && <CardsList client:load />}
+		<!-- {postsList && <CardsList client:load />} -->
 	</section>
-
-	<script is:inline>
-		// Фиксируем время загрузки страницы
-		const pageLoadTime = Date.now()
-
-		// Обработчик кликов по ссылкам
-		document.body.addEventListener("click", function (e) {
-			// Проверяем, что клик был по ссылке с id="link"
-			if (e.target.tagName === "A" && e.target.id === "link") {
-				// Останавливаем стандартное поведение ссылки
-				e.preventDefault()
-
-				// Время клика
-				const clickTime = Date.now()
-
-				// Проверяем, произошло ли время между загрузкой и кликом слишком быстро
-				if (clickTime - pageLoadTime < 1000) {
-					// 1000 мс = 1 секунда
-					// Сообщаем пользователю
-					alert(
-						"Доступ заблокирован. Пожалуйста, попробуйте снова через несколько секунд.",
-					)
-				} else {
-					// Отложенная обработка клика
-					setTimeout(() => {
-						// Показать пользователю диалоговое окно для подтверждения
-						const isHuman = confirm("Вы человек? Нажмите 'Да/Ок', чтобы продолжить.")
-
-						// Если пользователь подтвердил, что он человек
-						if (isHuman) {
-							// Перенаправить пользователя на нужную ссылку
-							window.open(e.target.href, "_blank")
-						} else {
-							// Если не подтвердил, выдать сообщение
-							alert("Доступ заблокирован. Подтвердите, что вы человек, чтобы продолжить.")
-						}
-					}, 0) // Используем setTimeout для отложенной обработки
-				}
-			}
-		})
-	</script>
 </Layout>

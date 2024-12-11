@@ -1,11 +1,20 @@
-// src/pages/api/card.ts (например)
-export const prerender = false
+import { createClient } from "@supabase/supabase-js" // Импортируем клиент Supabase
 import type { APIRoute } from "astro"
-import { asc, db, eq, Post, User } from "astro:db"
+
+// Создаем экземпляр клиента Supabase (используя свои URL и ключ)
+const supabase = createClient(
+	"https://fkwivycaacgpuwfvozlp.supabase.co",
+	"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZrd2l2eWNhYWNncHV3ZnZvemxwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzM5MDc4MTEsImV4cCI6MjA0OTQ4MzgxMX0.44dYay0RWos4tqwuj6H-ylqN4TrAIabeQLNzBn6Xuy0",
+)
+
+// Отключаем prerendering, так как это серверный запрос
+export const prerender = false
 
 export const POST: APIRoute = async ({ request }) => {
 	try {
+		// Чтение данных из запроса
 		const { message, userId } = await request.json()
+
 		if (!message) {
 			return new Response(JSON.stringify({ error: "Message is required" }), {
 				status: 400,
@@ -15,48 +24,36 @@ export const POST: APIRoute = async ({ request }) => {
 				},
 			})
 		}
-		// Сохраняем новый пост в базу данных
-		await db.insert(Post).values({
-			description: message, // Сохраняем сообщение в поле description
-			userId, // Сохраняем userId
-		})
 
-		// Получаем список постов и соединяем с данными пользователей
-		const postsList = await db
-			.select()
-			.from(Post)
-			.innerJoin(User, eq(Post.userId, User.id)) // Соединяем таблицы Post и User по userId
-			.orderBy(asc(Post.id)) // Сортируем по ID поста
+		// Добавление записи в таблицу posts в Supabase
+		const { data, error } = await supabase
+			.from("posts")
+			.insert([{ id: userId, message: message }])
 
-		// Формируем результат
-		const result = postsList.map(post => ({
-			postId: post.Post.id,
-			description: post.Post.description,
-			userId: post.User.id,
-			username: post.User.username,
-		}))
+		// Обработка ошибок, если они возникнут
+		if (error) {
+			return new Response(JSON.stringify({ error: error.message }), {
+				status: 500,
+				headers: {
+					"Content-Type": "application/json",
+					"Access-Control-Allow-Origin": "*",
+				},
+			})
+		}
 
-		console.log("Добавление карточки с сообщением:", message)
+		// Если все прошло успешно
+		console.log("Карточка добавлена с сообщением:", message)
 
-		// Возвращаем результат в формате JSON
-		return new Response(JSON.stringify(result), {
-			status: 200,
-			headers: {
-				"Content-Type": "application/json",
-				"Access-Control-Allow-Origin": "*",
+		return new Response(
+			JSON.stringify({ success: true, message: "Карточка добавлена!" }),
+			{
+				status: 200,
+				headers: {
+					"Content-Type": "application/json",
+					"Access-Control-Allow-Origin": "*", // Разрешаем все домены
+				},
 			},
-		})
-
-		// return new Response(
-		// 	JSON.stringify({ success: true, message: "Карточка добавлена!" }),
-		// 	{
-		// 		status: 200,
-		// 		headers: {
-		// 			"Content-Type": "application/json",
-		// 			"Access-Control-Allow-Origin": "*", // Разрешаем все домены
-		// 		},
-		// 	},
-		// )
+		)
 	} catch (error) {
 		console.error("Ошибка при добавлении карточки:", error)
 		return new Response(JSON.stringify({ error: "Error adding card" }), {
