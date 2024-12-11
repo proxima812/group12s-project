@@ -1,4 +1,7 @@
-import { createClient } from "@supabase/supabase-js" // Импортируем клиент Supabase
+export const prerender = false
+
+import { createClient } from "@supabase/supabase-js"
+// Импортируем клиент Supabase
 import type { APIRoute } from "astro"
 
 // Создаем экземпляр клиента Supabase (используя свои URL и ключ)
@@ -7,8 +10,6 @@ const supabase = createClient(
 	"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZrd2l2eWNhYWNncHV3ZnZvemxwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzM5MDc4MTEsImV4cCI6MjA0OTQ4MzgxMX0.44dYay0RWos4tqwuj6H-ylqN4TrAIabeQLNzBn6Xuy0",
 )
 
-// Отключаем prerendering, так как это серверный запрос
-export const prerender = false
 
 export const POST: APIRoute = async ({ request }) => {
 	try {
@@ -28,7 +29,7 @@ export const POST: APIRoute = async ({ request }) => {
 		// Добавление записи в таблицу posts в Supabase
 		const { data, error } = await supabase
 			.from("posts")
-			.insert([{ id: userId, message: message }])
+			.insert([{ id: userId, desc: message }])
 
 		// Обработка ошибок, если они возникнут
 		if (error) {
