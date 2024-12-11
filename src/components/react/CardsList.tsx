@@ -1,5 +1,5 @@
+import { useEffect, useState } from "react"
 import useSWR from "swr"
-import { useState, useEffect } from "react"
 import ArticleCard from "./ArticleCard"
 import PreloaderCard from "./PreloaderCard"
 
@@ -59,11 +59,10 @@ const CardsList = () => {
 
 	return (
 		<>
-			{displayedPosts
-				.sort((a, b) => b.id - a.id)
-				.map((post, index) => (
-					<ArticleCard key={post.id} post={post} index={index} />
-				))}
+			{displayedPosts &&
+				displayedPosts
+					.sort((a, b) => b.id - a.id)
+					.map((post, index) => <ArticleCard key={post.id} post={post} index={index} />)}
 
 			{/* Если есть ещё посты для отображения и идет загрузка (больше данных, чем отображено) */}
 			{visibleCount < allPosts.length && (
